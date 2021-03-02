@@ -130,7 +130,7 @@ def generate_movies(n_samples=1200, n_frames=15):
 ## Train the model
 """
 
-epochs = 1  # In practice, you would need hundreds of epochs.
+epochs = 100  # In practice, you would need hundreds of epochs.
 print('generating movies')
 noisy_movies, shifted_movies = generate_movies(n_samples=1200)
 
