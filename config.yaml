@@ -2,3 +2,4 @@
 
 dataset_path: /fast/bradsaund/realsense_prediction
 save_path: /fast/bradsaund/realsense_prediction
+model_path:

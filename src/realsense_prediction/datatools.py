@@ -9,10 +9,18 @@ import numpy as np
 
 
 def load_config():
-    config_fp = Path(rospkg.RosPack().get_path('realsense_prediction')) / 'config.yaml'
+    config_fp = get_base_path() / 'config.yaml'
     with config_fp.open() as f:
         config = yaml.load(f, yaml.FullLoader)
     return config
+
+
+def get_base_path():
+    return Path(rospkg.RosPack().get_path('realsense_prediction'))
+
+
+def get_trial_path():
+    return get_base_path() / "trials"
 
 
 def load_movie():
@@ -28,4 +36,3 @@ def load_movie():
     return tf.stack([tf.stack(arrs)])
 
     # return data_path.glob()
-
