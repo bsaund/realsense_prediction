@@ -1,0 +1,4 @@
+# realsense prediction configs
+
+dataset_path: /fast/bradsaund/realsense_prediction
+save_path: /fast/bradsaund/realsense_prediction

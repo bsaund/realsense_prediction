@@ -1,0 +1,12 @@
+<launch>
+    <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+        <arg name="filters" value="pointcloud"/>
+        <arg name="enable_accel" value="true"/>
+        <arg name="enable_gyro" value="true"/>
+        <arg name="initial_reset" value="true"/>
+    </include>
+</launch>
+
+<!--roslaunch realsense2_camera rs_camera.launch filters:=pointcloud enable_accel:=True -->
+<!--        enable_gyro:=True initial_reset:=True-->
+
