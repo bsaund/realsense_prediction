@@ -21,6 +21,7 @@ from tensorflow.keras import layers
 import numpy as np
 import pylab as plt
 from arc_utilities import video_writer
+from pathlib import Path
 
 """
 ## Build a model
@@ -154,11 +155,13 @@ test_movie = noisy_movies[movie_index]
 
 # Start from first 7 frames
 track = test_movie[:7, ::, ::, ::]
-video_writer.save_video(test_movie*255, filepath='/home/bsaund/tmp/test_movie.mp4')
+video_writer.save_video(test_movie * 255,
+                        filepath=Path.home().as_posix() + '/tmp/test_movie.mp4')
 
 # Predict 16 frames
 for j in range(16):
     new_pos = seq.predict(track[np.newaxis, ::, ::, ::, ::])
     new = new_pos[::, -1, ::, ::, ::]
     track = np.concatenate((track, new), axis=0)
-video_writer.save_video(track*255, filepath='/home/bsaund/tmp/track.mp4')
+video_writer.save_video(track * 255,
+                        filepath=Path.home().as_posix() + '/tmp/track.mp4')
