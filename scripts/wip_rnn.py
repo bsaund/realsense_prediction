@@ -12,6 +12,7 @@ from realsense_prediction.simple_convlstm import get_simple_convlstm, generate_m
 
 def main():
     myModel = MyModel()
+    myModel.compile(loss="binary_crossentropy", optimizer="adadelta")
     model = get_simple_convlstm()
     m2 = SimpleConvLstm(hparams={}, batch_size=10)
     m2.compile(loss="binary_crossentropy", optimizer="adadelta")
