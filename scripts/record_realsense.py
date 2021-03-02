@@ -5,7 +5,7 @@ import rospy
 from pathlib import Path
 from sensor_msgs.msg import CompressedImage, Imu
 import cv2
-import realsense_prediction
+from realsense_prediction import datatools
 
 SAVE_IMAGES = True
 
@@ -49,7 +49,7 @@ def get_save_directory():
     # config_fp = Path(rospkg.RosPack().get_path('realsense_prediction')) / 'config.yaml'
     # with config_fp.open() as f:
     #     config = yaml.load(f, yaml.FullLoader)
-    config = realsense_prediction.datatools.load_config()
+    config = datatools.load_config()
     save_path = Path(config['save_path'])
     max_video = max([int(p.parts[-1].strip('video_')) for p in save_path.glob('video*/**')] + [0])
     save_path = save_path / f'video_{max_video + 1:03}'

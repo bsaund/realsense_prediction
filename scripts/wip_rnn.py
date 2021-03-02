@@ -37,7 +37,17 @@ seq.compile(loss="binary_crossentropy", optimizer="adadelta")
 
 if __name__ == '__main__':
     data = datatools.load_movie()
-    video_writer.save_video(data[0, :, :, :, :], '/home/bsaund/tmp/rnn.mp4', fps=10)
+    video_writer.save_video(data[0, :, :, :, :], '/home/bsaund/tmp/rnn.mp4', fps=30)
     print(data.shape)
     print("Training")
-    # seq.fit(data, data, batch_size=1, epochs=100, verbose=2)
+    seq.fit(data, data, batch_size=1, epochs=1000, verbose=2)
+
+    test_movie = data[0]
+    track = test_movie[:40, ::, ::, ::]
+    for j in range(40):
+        new_pos = seq.predict(track[np.newaxis, ::, ::, ::, ::])
+        new = new_pos[::, -1, ::, ::, ::]
+        track = np.concatenate((track, new), axis=0)
+    video_writer.save_video(track, '/home/bsaund/tmp/test.mp4', fps=10)
+
+

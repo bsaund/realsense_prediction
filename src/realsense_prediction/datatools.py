@@ -23,7 +23,7 @@ def load_movie():
     for i, frame in enumerate(frames[1:100]):
         # print(f'loading frame {i}')
         img = img_to_array(load_img(frame))
-        arrs.append(tf.image.resize(img, [480, 640]))
+        arrs.append(tf.image.resize(img, [48, 64]))
     # return np.array([arrs])
     return tf.stack([tf.stack(arrs)])
 
