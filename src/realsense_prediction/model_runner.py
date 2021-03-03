@@ -82,7 +82,7 @@ class ModelRunner:
         if self.checkpoint.name == 'latest_checkpoint':
             status = self.latest_ckpt.restore(latest_checkpoint_manager.latest_checkpoint)
             if latest_checkpoint_manager.latest_checkpoint is not None:
-                print(Fore.CYAN + "Restoring latest {}".format(latest_checkpoint_manager.latest_checkpoint))
+                print(Fore.CYAN + "Restoring latest {}".format(latest_checkpoint_manager.latest_checkpoint) + Fore.RESET)
                 status.assert_existing_objects_matched()
             else:
                 raise ValueError("Failed to restore! wrong checkpoint path?")

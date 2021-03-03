@@ -3,48 +3,63 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from realsense_prediction import datatools, model_runner, utils
-# from arc_utilities import video_writer
+from arc_utilities import video_writer
 from realsense_prediction.simple_convlstm import get_simple_convlstm, SimpleConvLstm, MyModel
 from realsense_prediction.simple_dataset import SimpleDataset
 from realsense_prediction.utils import filepath_utils
+import argparse
+from pathlib import Path
 
-# keras.layers.TimeDistributed
 
-
-def main():
+def train(group):
     # myModel = MyModel()
     ds = SimpleDataset()
-    ds.set_num_samples(1000)
+    ds.set_num_samples(10000)
     ds = ds.batch(10)
 
+    val_ds = SimpleDataset()
+    val_ds.set_num_samples(100)
+    val_ds = val_ds.batch(10)
+
     model = SimpleConvLstm(hparams={}, batch_size=None)
-    # myModel.compile(loss="binary_crossentropy", optimizer="adadelta")
-    # path = datatools.get_trial_path() / 'wip'/ 'trial_01'
-    path, _ = filepath_utils.create_trial('wip', params = {})
+    path, _ = filepath_utils.create_trial(group, params={})
     mr = model_runner.ModelRunner(model, True, path, params=None)
-    mr.train(ds, ds, num_epochs=10)
+    mr.train(ds, val_ds, num_epochs=10)
 
-    # myModel.fit(np.random.random((5, 10,40,40,1)), np.random.random((5, 10,40,40,1)))
-    # model = get_simple_convlstm()
-    # m2 = SimpleConvLstm(hparams={}, batch_size=10)
-    # m2.compile(loss="binary_crossentropy", optimizer="adadelta")
-    # path = datatools.get_trial_path() / 'trial_01'
-    # mr = model_runner.ModelRunner(model, True, path, None)
 
-    print('generating movies')
-    # noisy_movies, shifted_movies = generate_movies()
-    # myModel.fit(noisy_movies, shifted_movies, batch_size=5)
-    # a_movie = noisy_movies[0]
-    # some_movies = noisy_movies[0:2]
 
-    # model.fit(noisy_movies, shifted_movies, batch_size=10,
-    #           epochs=1,
-    #           verbose=2,
-    #           validation_split=0.1)
-    #
-    # m2.fit(noisy_movies, shifted_movies, batch_size=10, epochs=1, verbose=2, validation_split=0.1)
-    # output = model(noisy_movies[0])
+def test(group, trial):
+    print(f'loading group {group}, trial {trial}')
+    model_path, params = filepath_utils.load_trial(Path(group) / trial)
+    model = SimpleConvLstm(hparams=params, batch_size=None)
+    mr = model_runner.ModelRunner(model, False, model_path, params,
+                                  checkpoint=model_path / 'latest_checkpoint')
+    test_ds = SimpleDataset().set_num_samples(100)
+    test_ds = test_ds.batch(1)
+    mr.model(test_ds[0].load())
+    forward_video = forward_predict_movie(mr.model, test_ds[0].load())
+    video_writer.save_video(forward_video['input'][0], Path().home() / 'tmp' / 'gen.mp4')
+
+
+def forward_predict_movie(model, track, num_steps=40):
+    print("Forward predicting movie")
+    for j in range(num_steps):
+        new_pos = model(track)
+        new = new_pos[::, -1:, ::, ::, ::]
+        track['input'] = tf.concat((track['input'], new), axis=1)
+    return track
 
 
 if __name__ == '__main__':
-    main()
+    p = argparse.ArgumentParser()
+    p.add_argument('--train', action='store_true')
+    p.add_argument('--test', action='store_true')
+    p.add_argument('--group', default='wip')
+    p.add_argument('--trial')
+    args = p.parse_args()
+
+    if args.train:
+        train(args.group)
+    if args.test:
+        test(args.group, args.trial)
+    print(args.group)

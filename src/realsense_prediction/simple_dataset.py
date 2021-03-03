@@ -15,6 +15,7 @@ class SimpleDataset:
 
     def set_num_samples(self, num_samples):
         self.metadataset = [i for i in range(num_samples)]
+        return self
 
     def batch(self, batch_size, skip_uneven=True):
         return [SimpleDataset(seq) for seq in chunker(self.metadataset, batch_size)
@@ -25,7 +26,7 @@ class SimpleDataset:
         return {'input': noisy_movies, 'output': shifted_movies}
 
 
-def generate_movies(n_samples=1200, n_frames=15):
+def generate_movies(n_samples=1200, n_frames=30):
     row = 80
     col = 80
     noisy_movies = np.zeros((n_samples, n_frames, row, col, 1), dtype=np.float32)

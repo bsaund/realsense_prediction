@@ -41,7 +41,7 @@ def load_trial(trial_path):
     trial_path = pathlib.Path(trial_path)
     if not trial_path.is_absolute():
         r = rospkg.RosPack()
-        trial_path = pathlib.Path(r.get_path('shape_completion_training')) / "trials" / trial_path
+        trial_path = pathlib.Path(r.get_path('realsense_prediction')) / "trials" / trial_path
     if not trial_path.is_dir():
         raise ValueError("Cannot load, the path {} is not an existing directory".format(trial_path))
 
@@ -101,6 +101,9 @@ def create_trial(group_name, params, trials_directory=None):
     params_filename = trial_path / 'params.json'
     with params_filename.open("w") as params_file:
         json.dump(params, params_file, indent=2)
+    with (trial_path / 'readme.txt').open("w") as f:
+        f.write(f'Trials for group {group_name}\n'
+                f'Original filepath during training was {trial_path}')
 
     return trial_path, params
 
@@ -119,8 +122,9 @@ def _write_summary(full_trial_directory, group_name, unique_trial_subdirectory_n
 
 
 def get_default_params():
-    r = rospkg.RosPack()
-    shape_completion_training_path = pathlib.Path(r.get_path('shape_completion_training'))
-    default_params_filename = shape_completion_training_path / 'default_params.json'
-    with default_params_filename.open('r') as default_params_file:
-        return json.load(default_params_file)
+    # r = rospkg.RosPack()
+    # shape_completion_training_path = pathlib.Path(r.get_path('shape_completion_training'))
+    # default_params_filename = shape_completion_training_path / 'default_params.json'
+    # with default_params_filename.open('r') as default_params_file:
+    #     return json.load(default_params_file)
+    return {}
