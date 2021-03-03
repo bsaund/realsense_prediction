@@ -24,7 +24,7 @@ def train(group):
     model = SimpleConvLstm(hparams={}, batch_size=None)
     path, _ = filepath_utils.create_trial(group, params={})
     mr = model_runner.ModelRunner(model, True, path, params=None)
-    mr.train(ds, val_ds, num_epochs=10)
+    mr.train(ds, val_ds, num_epochs=100)
 
 
 
