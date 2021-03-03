@@ -8,7 +8,7 @@ import tensorflow as tf
 from colorama import Fore, Style
 
 from realsense_prediction.metric import LossMetric
-from realsense_prediction.utils import sequence_of_dicts_to_dict_of_sequences, reduce_mean_dict
+from realsense_prediction.utils.utils import sequence_of_dicts_to_dict_of_sequences, reduce_mean_dict
 
 
 class ModelRunner:
@@ -142,11 +142,12 @@ class ModelRunner:
             t0 = time.time()
 
             for batch_idx, train_batch in enumerate(train_dataset):
-                train_batch.update(self.batch_metadata)
+                # train_batch.update(self.batch_metadata)
+                data = train_batch.load()
                 self.num_train_batches += 1
                 self.latest_ckpt.step.assign_add(1)
 
-                _, train_batch_metrics = self.model.train_step(train_batch)
+                _, train_batch_metrics = self.model.train_step(data)
                 time_str = str(datetime.timedelta(seconds=int(self.latest_ckpt.train_time.numpy())))
                 bar.update(self.num_train_batches,
                            Loss=train_batch_metrics['loss'].numpy().squeeze(), TrainTime=time_str)
@@ -177,7 +178,8 @@ class ModelRunner:
     def mid_epoch_validation(self, val_dataset):
         val_metrics = []
         for i, val_batch in enumerate(val_dataset.take(self.mid_epoch_val_batches)):
-            val_batch.update(self.batch_metadata)
+            # val_batch.update(self.batch_metadata)
+            val_batch = val_batch.load()
             _, val_batch_metrics = self.model.val_step(val_batch)
             val_metrics.append(val_batch_metrics)
 
@@ -203,7 +205,8 @@ class ModelRunner:
             self.num_val_batches = 0
             val_metrics = []
             for val_batch in val_dataset:
-                val_batch.update(self.batch_metadata)
+                # val_batch.update(self.batch_metadata)
+                val_batch = val_batch.load()
                 self.num_val_batches += 1
                 _, val_batch_metrics = self.model.val_step(val_batch)
                 val_metrics.append(val_batch_metrics)

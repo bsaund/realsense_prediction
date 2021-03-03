@@ -16,9 +16,9 @@ class MyKerasModel(tf.keras.Model):
     def __init__(self, hparams, batch_size, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # self.batch_size = batch_size
-        # self.hparams = deepcopy(hparams)
-        # learning_rate = hparams.get('learning_rate', 1e-3)
-        # self.optimizer = tf.keras.optimizers.Adam(learning_rate)
+        self.hparams = deepcopy(hparams)
+        learning_rate = hparams.get('learning_rate', 1e-3)
+        self.optimizer = tf.keras.optimizers.Adam(learning_rate)
 
     def call(self, dataset_element, training=False, **kwargs):
         """
