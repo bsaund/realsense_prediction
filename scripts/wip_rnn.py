@@ -41,8 +41,9 @@ def test(group, trial):
     video_writer.save_video(forward_video['input'][0], Path().home() / 'tmp' / 'gen.mp4')
 
 
-def forward_predict_movie(model, track, num_steps=40):
+def forward_predict_movie(model, track, run_in_steps=10, num_steps=40):
     print("Forward predicting movie")
+    track['input'] = track['input'][:, 0:run_in_steps, :, :, :]
     for j in range(num_steps):
         new_pos = model(track)
         new = new_pos[::, -1:, ::, ::, ::]
