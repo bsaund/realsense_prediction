@@ -27,7 +27,7 @@ class SimpleConvLstm(MyKerasModel):
 
     def compute_loss(self, dataset_element, outputs):
         # return {'loss': tf.reduce_sum(tf.abs(dataset_element['output'] - outputs))}
-        return {'loss', tf.losses.binary_crossentropy(dataset_element['output'], outputs)}
+        return {'loss': tf.reduce_sum(tf.losses.binary_crossentropy(dataset_element['output'], outputs))}
 
 def get_simple_convlstm():
     seq = keras.Sequential(
