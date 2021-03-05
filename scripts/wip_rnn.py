@@ -27,17 +27,26 @@ def train(group):
     mr.train(ds, val_ds, num_epochs=100)
 
 
-
 def test(group, trial):
     print(f'loading group {group}, trial {trial}')
     model_path, params = filepath_utils.load_trial(Path(group) / trial)
     model = SimpleConvLstm(hparams=params, batch_size=None)
+    untrained_model = SimpleConvLstm(hparams=params, batch_size=None)
     mr = model_runner.ModelRunner(model, False, model_path, params,
                                   checkpoint=model_path / 'latest_checkpoint')
     test_ds = SimpleDataset().set_num_samples(100)
     test_ds = test_ds.batch(1)
-    mr.model(test_ds[0].load())
-    forward_video = forward_predict_movie(mr.model, test_ds[0].load())
+    test_elem = test_ds[0].load()
+    mr.model(test_elem)
+
+    tf.reduce_max(untrained_model(test_elem) - test_elem['output'])
+    tf.reduce_max(model(test_elem) - test_elem['output'])
+
+    for i in range(len(model.weights)):
+        print(f'layer {i} max weights are {tf.reduce_max(model.weights[i])}, '
+              f'{tf.reduce_max(untrained_model.weights[i])}')
+
+    forward_video = forward_predict_movie(mr.model, test_elem)
     video_writer.save_video(forward_video['input'][0], Path().home() / 'tmp' / 'gen.mp4')
 
 
